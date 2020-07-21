@@ -55,18 +55,29 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $user           = new User;
-        $user->email    = $request->email;
-        $user->name     = $request->name;
-        $user->password = bcrypt($request->password);
-        $user->save();
-        $token  = $user->createToken('Personal Access Token')->accessToken;
-        $cookie = $this->getCookieDetails($token);
-        return response()
-            ->json([
-                'data'  => $user,
-                'token' => $token,
-            ], 200)
-            ->cookie($cookie['name'], $cookie['value'], $cookie['minutes'], $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly'], $cookie['samesite']);
+        $register = function() use($request)
+        {
+             try
+            {
+                $user           = new User;
+                $user->email    = $request->email;
+                $user->name     = $request->name;
+                $user->password = bcrypt($request->password);
+                $user->save();
+                $token  = $user->createToken('Personal Access Token')->accessToken;
+                $cookie = $this->getCookieDetails($token);
+                 return response()
+                    ->json([
+                        'data'  => $user,
+                        'token' => $token,
+                    ], 200)
+                    ->cookie($cookie['name'], $cookie['value'], $cookie['minutes'], $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly'], $cookie['samesite']);
+            }
+            catch(Exception $e)
+            {
+                return response()->json(['error'=>'some problem occures.try again'], 400);
+            }
+        };
+        return DB::transaction($register);
     }
 }
