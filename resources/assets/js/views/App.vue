@@ -18,16 +18,13 @@
             view deleted books
           </router-link>
           <div v-if="authenticated && user">
-            <p>
-              Hello, {{ user.name }}
-            </p>
-            <button @click.prevent="logout" class="btn btn-primary btn-block btn-flat" type="button">
+            <button @click.prevent="logout" class="nav-item nav-link" type="button">
               <i class="fa fa-sign-in">
               </i>
               Logout
             </button>
           </div>
-          <div v-else="">
+          <div v-else="" style="display: contents;">
             <router-link class="nav-item nav-link" to="/api/login">
               Login
             </router-link>
@@ -38,6 +35,11 @@
         </div>
       </div>
     </nav>
+    <div v-if="authenticated && user">
+            <p>
+              Hello, {{ user.name }}
+            </p>
+          </div>
     <br/>
     <router-view>
     </router-view>

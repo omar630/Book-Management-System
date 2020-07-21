@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Book;
-use App\Jobs\SendEmail;
 use App\Mail\Emails;
 use Mail;
 

@@ -1,7 +1,7 @@
 <template>
   <div v-if="authenticated && user">
     <h3 class="text-center">
-      All Books
+      All Deleted Books
     </h3>
     <br/>
     <table class="table table-bordered">
@@ -31,7 +31,7 @@
               <button @click="deleteBook(book.id)" class="btn btn-danger">
                 Delete permanently
               </button>
-              <button @click="restore(book.id)" class="btn btn-danger">
+              <button @click="restore(book.id)" class="btn btn-primary">
                 Restore
               </button>
             </div>
