@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use DB;
 use App\User;
 use Illuminate\Http\Request;
+use App\Http\Resources\BooksCollection;
 
 class BookController extends Controller
 {
@@ -15,24 +17,8 @@ class BookController extends Controller
      */
     public function index(Request $request)
     {
-        $books = $request->user()->books()->latest()->get()->toArray();
-        return $books;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $book = new Book([
-            'name'    => $request->input('name'),
-            'author'  => $request->input('author'),
-            'user_id' => $request->user()->id,
-        ]);
-        $book->save();
-        return response()->json('The book successfully added');
+        $books = $request->user()->books()->latest()->get();
+        return new BooksCollection($books);
     }
 
     /**
@@ -43,7 +29,17 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $book = new Book([
+            'name'    => $request->input('name'),
+            'author'  => $request->input('author'),
+            'user_id' => $request->user()->id,
+        ]);
+
+        DB::transaction(function () use($book) {
+            $book->save();
+        });
+
+        return response()->json('The book successfully added');
     }
 
     /**
@@ -54,19 +50,8 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
         $book = Book::find($id);
-        return response()->json($book);
+        return new BooksCollection($book);
     }
 
     /**
@@ -79,10 +64,13 @@ class BookController extends Controller
     public function update(Request $request)
     {
         $book = Book::find($request->input('id'));
-        $book->update([
-            'name'   => $request->input('name'),
-            'author' => $request->input('author'),
-        ]);
+
+        DB::transaction(function () use($book) {
+            $book->update([
+                'name'   => $request->input('name'),
+                'author' => $request->input('author'),
+            ]);
+        });
 
         return response()->json('The book successfully updated');
     }
@@ -107,7 +95,7 @@ class BookController extends Controller
     public function getDeleted(Request $request)
     {
         $books = $request->user()->books()->onlyTrashed()->latest('deleted_at')->get()->toArray();
-        return $books;
+        return new BooksCollection($books);
     }
 
     public function restoreBook($id)

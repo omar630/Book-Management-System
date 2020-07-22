@@ -55,7 +55,7 @@ export default {
     .get('/api/books/deletedbooks')
     .then(response => {
       console.log(response)
-      this.books = response.data;
+      this.books = response.data.data;
     });
   },
   methods: {

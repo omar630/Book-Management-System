@@ -37,9 +37,9 @@ export default {
   },
   created() {
     this.axios
-    .get(`/api/book/${this.$route.params.id}/edit`)
+    .get(`/api/book/${this.$route.params.id}`)
     .then((response) => {
-      this.book = response.data;
+      this.book = response.data.data;
                     // console.log(response.data);
                   });
   },
