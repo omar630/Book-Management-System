@@ -1,5 +1,5 @@
 <template>
-  <div v-if="authenticated && user">
+  <div v-if="authenticated">
     <h3 class="text-center">
       All Deleted Books
     </h3>

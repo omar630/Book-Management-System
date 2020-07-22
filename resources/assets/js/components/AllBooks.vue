@@ -1,5 +1,5 @@
 <template>
-    <div v-if="authenticated && user">
+    <div v-if="authenticated">
         <h3 class="text-center">
             All Books({{ count }})
         </h3>
@@ -46,6 +46,8 @@
             }
         },
         created() {
+            console.log(auth.check())
+            console.log(auth.user)
             this.axios
                 .get('/api/book')
                 .then(response => {
