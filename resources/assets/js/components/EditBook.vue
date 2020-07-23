@@ -32,14 +32,16 @@
 export default {
   data() {
     return {
-      book: {}
+      book: {"name" : '',"author": ''}
     }
   },
   created() {
     this.axios
-    .get(`/api/book/${this.$route.params.id}/edit`)
+    .get(`/api/book/${this.$route.params.id}`)
     .then((response) => {
-      this.book = response.data;
+      console.log('edit book')
+      console.log(response.data.data)
+      this.book = response.data.data;
                     // console.log(response.data);
                   });
   },

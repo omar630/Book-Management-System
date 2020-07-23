@@ -24,5 +24,5 @@ Route::middleware('auth:api')->group(function () {
     Route::any('/logout', 'AuthController@logout');
     Route::get('books/deletedbooks','BookController@getDeleted');
     Route::get('book/{id}/restore','BookController@restoreBook');
-    Route::resource('book', 'BookController');    
+    Route::apiResource('book', 'BookController');    
 });

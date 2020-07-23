@@ -31,7 +31,7 @@ export default {
       console.log(this.book.author);
 
       this.axios
-      .get(`/api/book/create?name=${this.book.name}&author=${this.book.author}`)
+      .post(`/api/book/`,this.book)
       .then(response => (
         this.$router.push({name: 'home'})
                         // console.log(response.data)

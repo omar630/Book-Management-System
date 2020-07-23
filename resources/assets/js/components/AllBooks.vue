@@ -1,7 +1,7 @@
 <template>
-    <div v-if="authenticated && user">
+    <div v-if="authenticated">
         <h3 class="text-center">
-            All Books
+            All Books({{ count }})
         </h3>
         <br/>
         <table class="table table-bordered">
@@ -41,15 +41,20 @@
             return {
                 authenticated: auth.check(),
             user: auth.user,
-                books: []
+                books: [],
+                count: 0
             }
         },
         created() {
+            console.log(auth.check())
+            console.log(auth.user)
             this.axios
                 .get('/api/book')
                 .then(response => {
+                console.log('all books component')
                 console.log(response)
-                    this.books = response.data;
+                    this.books = response.data.data;
+                    this.count = response.data.meta.book_count;
                 });
         },
         methods: {
@@ -59,7 +64,8 @@
                     .then(response => {
                         let i = this.books.map(item => item.id).indexOf(id); // find index of your object
                         this.books.splice(i, 1)
-                    });
+                        this.count = this.count-1;
+                    });                    
             }
         }
     }

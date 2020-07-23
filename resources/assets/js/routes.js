@@ -33,7 +33,7 @@ export const routes = [
 },
 {
   name: 'edit',
-  path: '/api/book/:id/edit',
+  path: '/api/book/:id',
   component: EditBook,
   meta: {
     auth: true

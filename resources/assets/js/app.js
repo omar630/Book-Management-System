@@ -31,11 +31,9 @@ router.beforeEach((to, from, next) => {
       return;
     }
   }
-
   next();
 })
 const app = new Vue({
- el: '#app',
  router: router,
  render: h => h(App),
-});
+}).$mount("#app");
