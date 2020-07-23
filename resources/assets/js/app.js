@@ -31,7 +31,6 @@ router.beforeEach((to, from, next) => {
       return;
     }
   }
-
   next();
 })
 const app = new Vue({

@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use DB;
-use App\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksCollection;
+use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * 
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -50,8 +51,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        $book = Book::find($id);
-        return new BooksCollection($book);
+        return new BookResource($book);
     }
 
     /**
@@ -61,11 +61,10 @@ class BookController extends Controller
      * @param  \App\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Book $book, Request $request)
     {
-        $book = Book::find($request->input('id'));
+        DB::transaction(function () use($book,$request) {
 
-        DB::transaction(function () use($book) {
             $book->update([
                 'name'   => $request->input('name'),
                 'author' => $request->input('author'),
@@ -78,30 +77,51 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Book  $book
+     * @param  int id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        $book = Book::withTrashed()->where('id', $id)->first();
+    {        
+        $book = Book::withTrashed()->find($id);
         if ($book->trashed()) {
-            $book->forceDelete();
-        }
-        $book->delete();
 
+            DB::transaction(function () use($book) {
+
+                $book->forceDelete();
+            });
+        }        
+        DB::transaction(function () use($book) {
+
+            $book->delete();
+        });
         return response()->json('The book successfully deleted');
     }
 
+    /**
+     * Display SoftDeleted resources
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function getDeleted(Request $request)
     {
-        $books = $request->user()->books()->onlyTrashed()->latest('deleted_at')->get()->toArray();
+        $books = $request->user()->books()->onlyTrashed()->latest('deleted_at')->get();
         return new BooksCollection($books);
     }
-
+    
+    /**
+     * restore softdeleted resource
+     *
+     * @param  int id
+     * @return \Illuminate\Http\Response
+     */
     public function restoreBook($id)
     {
-        $books = Book::onlyTrashed()->where('id', $id)->first();
-        $books->restore();
+        $book = Book::onlyTrashed()->where('id', $id)->first();
+        DB::transaction(function () use($book) {
+
+            $book->restore();
+        });        
         return response()->json('The book successfully restored');
     }
 }

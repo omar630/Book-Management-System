@@ -5,7 +5,7 @@
         Book Management System
       </h1>
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
       <div class="collapse navbar-collapse">
         <div class="navbar-nav">
           <router-link :to="{ name: 'home' }" class="nav-item nav-link">

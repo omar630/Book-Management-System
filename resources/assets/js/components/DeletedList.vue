@@ -1,7 +1,7 @@
 <template>
   <div v-if="authenticated">
     <h3 class="text-center">
-      All Deleted Books
+      All Deleted Books({{ count }})
     </h3>
     <br/>
     <table class="table table-bordered">
@@ -47,7 +47,8 @@ export default {
     return {
       authenticated: auth.check(),
       user: auth.user,
-      books: []
+      books: [],
+      count: 0
     }
   },
   created() {
@@ -56,6 +57,7 @@ export default {
     .then(response => {
       console.log(response)
       this.books = response.data.data;
+      this.count = response.data.meta.book_count;
     });
   },
   methods: {
@@ -65,7 +67,8 @@ export default {
       .then(response => {
                         let i = this.books.map(item => item.id).indexOf(id); // find index of your object
                         this.books.splice(i, 1)
-                      });
+                        this.count = this.count-1;
+                      });                      
     },
     restore(id) {
       this.axios
@@ -73,6 +76,7 @@ export default {
       .then(response => {
                         let i = this.books.map(item => item.id).indexOf(id); // find index of your object
                         this.books.splice(i, 1)
+                        this.count = this.count-1;
                       });
     }
   }

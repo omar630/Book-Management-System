@@ -51,6 +51,7 @@
             this.axios
                 .get('/api/book')
                 .then(response => {
+                console.log('all books component')
                 console.log(response)
                     this.books = response.data.data;
                     this.count = response.data.meta.book_count;
@@ -63,7 +64,8 @@
                     .then(response => {
                         let i = this.books.map(item => item.id).indexOf(id); // find index of your object
                         this.books.splice(i, 1)
-                    });
+                        this.count = this.count-1;
+                    });                    
             }
         }
     }
