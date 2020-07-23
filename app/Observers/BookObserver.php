@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Book;
 use App\Mail\Emails;
+use App\Notifications\BookAdded;
+use App\Notifications\BookDeleted;
 use Mail;
 
 class BookObserver
@@ -16,7 +18,7 @@ class BookObserver
      */
     public function created(Book $book)
     {
-        Mail::to($book->user->email)->queue(new Emails($book, 'added'));
+        $book->user->notify(new BookAdded($book));
         \Log::info('Email queued to ' . ($book->user['email']));        
     }
 
@@ -39,7 +41,7 @@ class BookObserver
      */
     public function deleted(Book $book)
     {
-        Mail::to($book->user->email)->queue(new Emails($book, 'deleted'));
+        $book->user->notify(new BookDeleted($book));
         \Log::info('Email queued to ' . $book->user->email);
     }
 
@@ -62,7 +64,6 @@ class BookObserver
      */
     public function forceDeleted(Book $book)
     {
-        Mail::to($book->user->email)->queue(new Emails($book, 'deleted permanently'));
-        \Log::info('Email queued to ' . $book->user->email);
+
     }
 }
